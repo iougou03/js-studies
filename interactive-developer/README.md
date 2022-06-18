@@ -29,3 +29,9 @@ you can find a course in [here](https://youtu.be/hCHL7sydzn0)
 * period : 2022-06-17 ~ 2022-06-17
 
 * source : [couse link](https://youtu.be/HMQ9fEX28fk)
+
+## chapter 5. color wave animation
+
+* period : 2022-06-18 ~ 2022-06-18
+
+* source : [couse link](https://youtu.be/kpF0n39xXVM)
