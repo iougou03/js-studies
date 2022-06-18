@@ -26,7 +26,6 @@ you can find a course in [here](https://youtu.be/hCHL7sydzn0)
 
 ## chapter 4. kinetic typography
 
-* period : 2022-06-16 ~ 2022-06-16
+* period : 2022-06-17 ~ 2022-06-17
 
 * source : [couse link](https://youtu.be/HMQ9fEX28fk)
-
