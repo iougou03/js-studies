@@ -35,3 +35,10 @@ you can find a course in [here](https://youtu.be/hCHL7sydzn0)
 * period : 2022-06-18 ~ 2022-06-18
 
 * source : [couse link](https://youtu.be/kpF0n39xXVM)
+
+## chapter 6. moving gradation
+
+* period : 2022-06-19 ~ 2022-06-19
+
+* source : [couse link](https://youtu.be/D6EiRSRhsbQ)
+
