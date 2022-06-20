@@ -42,3 +42,9 @@ you can find a course in [here](https://youtu.be/hCHL7sydzn0)
 
 * source : [couse link](https://youtu.be/D6EiRSRhsbQ)
 
+## chapter 7. wave animation
+
+* period : 2022-06-20 ~ 2022-06-20
+
+* source : [couse link](https://youtu.be/LLfhY4eVwDY)
+
