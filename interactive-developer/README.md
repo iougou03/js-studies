@@ -48,3 +48,9 @@ you can find a course in [here](https://youtu.be/hCHL7sydzn0)
 
 * source : [couse link](https://youtu.be/LLfhY4eVwDY)
 
+## chapter 8. bounce ball
+
+* period : 2022-06-21 ~ 2022-06-21
+
+* source : [couse link](https://youtu.be/sLCiI6d5vTM)
+
