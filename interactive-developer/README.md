@@ -54,3 +54,9 @@ you can find a course in [here](https://youtu.be/hCHL7sydzn0)
 
 * source : [couse link](https://youtu.be/sLCiI6d5vTM)
 
+## chapter 9. rotate shapes
+
+* period : 2022-06-22 ~ 2022-06-22
+
+* source : [couse link](https://youtu.be/sLCiI6d5vTM)
+
