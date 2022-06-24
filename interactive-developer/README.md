@@ -66,3 +66,9 @@ you can find a course in [here](https://youtu.be/hCHL7sydzn0)
 
 * source : [couse link](https://youtu.be/lu9n9-oJ-mA)
 
+## chapter 11. kinetic typography 3
+
+* period : 2022-06-24 ~ 2022-06-24
+
+* source : [couse link](https://youtu.be/TuvKsaG4H18)
+
