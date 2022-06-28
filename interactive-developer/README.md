@@ -90,3 +90,9 @@ you can find a course in [here](https://youtu.be/hCHL7sydzn0)
 
 * source : [couse link](https://youtu.be/YjSwj65I-zg)
 
+## chapter 15. kinetic typography 6 (last)
+
+* period : 2022-06-28 ~ 2022-06-28
+
+* source : [couse link](https://youtu.be/pJJQZvS9VNI)
+
