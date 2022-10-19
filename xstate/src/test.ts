@@ -101,9 +101,8 @@ const WorkerMachine =
           console.log("[worker]: ", context, event);
 
           // respond({ type: "Success" });
-
-          // respond({ type: "Failed" });
         },
+
         "Remove from windows list": () => {},
 
         "Push to tabs list": () => {},
@@ -118,38 +117,73 @@ const WorkerMachine =
   );
 
 const CurrentWindowMachine =
-  /** @xstate-layout N4IgpgJg5mDOIC5QGECuAndYB2AXABAO4CW2EA9ofgLYCGAxgBalgB0AMubRKVAMQVsbUgDdyAazZpMOAiTKUaDZkI5ce2KAlHl6tXMXLYA2gAYAumfOJQAB3KxiBozZAAPRAFoATAA4ALKwA7ACMAKwAnAFhQTER3gBsADQgAJ6IIUG+rKZhCWEAzFGF-qb+viEAvpUp0lh4RKQUVHRMLGrcvHxgmOTorLYANvoAZn3UrHWyjQotyu2cnZra2GJ6ziYWVq72jhuuHgieIVGsCUHeBeVBEaa+vhHhKelHIdnhpgUhmaZBpgkFSL+aq1DD1ORNRStFRsRYQSCsACSEEGYD4ACUwABHVBwAh6Qb0VDDAyabZIEC7JyGbAHLwhf7BIL5XwJBIVW4FC7PRClQLeCIRQqmEIFVlCkIJEEgKYNeTNJRtVRwhEAdT6knQAiMwlWEjYhA1PU80JY5LsDmpLgph2OEQKrAKTrFoSyWXuBR5CHO2QFBTu-m+CUevm80tlENmiphHXhEFY6vQmu6vX6Q1G41YhqTxtNQnNlMt+xtXn8-tYYW83y5Ire338YS9AO8FdMiRC-n8QpZYZqMrB03lUPmyvUaqNWoAKniC1Ti6BbVdAmFPlXwpcEt4BY20ohCg6bv6AkGQ73QTI5ZC5krYWOIHwAKJuJyzos0ukILdhYLeQNhSXVn4ITeF6Xwtv4fz+N4QRlvEmSFOGA6XlGeZsAAYrQxCovemK4OgqSvns74lq8fg5P6-xll8Hqsk2DrOlcviRFWW6lGE1R9tg5DwvAFIRjMCqobGvA7G+1oLl4lYtgxMkMaBESOs65TMcBv6IRekaCSOt7cAiyKoqJRHie4Xh+AeK5hExfwlMB8m+oKwqiuK-5Sn2-FDteMYqvGiaaoZVq0iRxwVK2BRrpWBSbtuXorvZR6BpKp7qeCAnDjesYIgAyqg9D0HAvEWkZgUSUcZZBMEFlWbkVy2buCBBOWfoBiebxnv2GmpZ5Cx3qwGFYZA-nziZpUrhWRT-N4O4vGEYSBIKDlQRuYW+Mlg5XtG3W6RAg3ESVnhdtkhS3JuU2IP6CkCkK-pOcGLmrchWnpdO6DUKQ+hgDtxmHGBZyUQkPx5ICEGgd8rARJBUHBr4pj-K554pR5G2qH12GfcVw0hb8MMubcvjMvcdGKU6ylwaxuT3ZpaUwmjH6eDEphE7Jcl1ccvysB8Xw-H8AKudUQA */
+  /** @xstate-layout N4IgpgJg5mDOIC5QGECuAndYB2AXABAO4CW2EA9ofgLYCGAxgBalgB0AMubRKVAMQVsbUgDdyAazZpMOAiTKUaDZkI5ce2KAlHl6tXMXLYA2gAYAumfOJQAB3KxiBozZAAPRAFoATAA4ALKwA7ACMAKwAnAFhQTER3gBsADQgAJ6IIUG+rKZhCWEAzFGF-qb+viEAvpUp0lh4RKQUVHRMLGrcvHxgmOTorLYANvoAZn3UrHWyjQotyu2cnZra2GJ6ziYWVq72jhuuHgieIVGsCUHeBeVBEaa+vhHhKelHIdnhpgUhmaZBpgkFSL+aq1DD1ORNRStFRsRYQSCsACSEEGYD4ACUwABHVBwAh6Qb0VDDAyabZIEC7JyGbAHLwhf7BIL5XwJBIVW4FC7PRClQLeCIRQqmEIFVlCkIJEEgKYNeTNJRtVRwhEAdT6knQAiMwlWEjYhA1PU80JY5LsDmpLgph2OEQKrAKTrFoSyWXuBR5CHO2QFBTu-m+CUevm80tlENmiphHXhEFY6vQmu6vX6Q1G41YhqTxtNQnNlMt+xtXn8-tYYW83y5Ire338YS9AO8FdMiRC-n8QpZYZqMrB03lUPmyvUaqNWoAKniC1Ti6BbVdAmFPlXwpcEt4BY20ohCg6bv6AkGQ73QTI5ZC5krYWP4wBlVD0ehwWB8WdFml0o4lYKRKLhJuIqmBEXr+LEFaSpkJzeGEdZVH2EYzAqea3twCIAGK0MQqIQO+Fg7J+1oLqWYSBMy5Rke2WTfGBEFwQk0HxHBFQduGA6XlGqGxpAfAAKJuE4H57F+JYIFuYTBN4gYMdWfghN4XpfC24FlN4QRlvEmSFOxF6RihI5sFhOG8ZiuDoKkwlWrSYnHH4OT+v8ZZfB6rJNg6zpXL4kRVlupRhNUfbYOQ8LwBSSFDteMZwrwhEicR7heJWLaealnlKREjrOpRWl+bp4LIcON48fGyKonF1nfj4vgHiuYTeX8JQKRlvqCsKorigx+WDle0YLHeCYThV86Ja8FStgUa6VgUm7bl6K6tUegaSqe3WcQZxUqg+T4vrAYUWvFNkkUcZZBH+uQNbkVzNbuCBBOWfoBiebxnv2emFVF-XofGxm4cNonHZ4DYJBWjEaQknaVgkIE7i8YSVsE-oNgGgLnK9EW9dxW3-Qltr1S2sSChUeTeMBoG3f6mUCkKZaVqE9XeWt+lFTG07oNQpD6GAONHaNylnE5YO5ACZFBEp3ysBEfydokUSmP8UqIRxzOfaov2QDz37jb88sMbcvjMvc7lZU6OW+dJuRMx9fVCJrtkAqYf5E4BpMMuTLzHL8rAfF8eROoULKBZUQA */
   createMachine(
     {
-      tsTypes: {} as import("./test.typegen").Typegen1,
-      schema: {
-        context: {} as IContext,
-        services: {} as {
-          "Call all chrome windows": {
-            // data: CurrentWindowMapping
-            data: boolean;
-          };
-        },
-        events: {} as
-          | { type: "Request calculating"; command: ChromeEventType }
-          | { type: "Exit" }
-          | { type: "Retry" }
-          | { type: "Test" },
-        actions: {} as {
-          type: "request to worker for calculation";
-          command: ChromeEventType;
-          context: IContext;
-        },
+  tsTypes: {} as import("./test.typegen").Typegen1,
+  schema: {
+    context: {} as IContext,
+    services: {} as {
+      "Call all chrome windows": {
+        // data: CurrentWindowMapping
+        data: boolean;
+      };
+    },
+    events: {} as
+      | { type: "Request calculating"; command: ChromeEventType }
+      | { type: "Exit" }
+      | { type: "Retry" }
+      | { type: "Test" },
+    actions: {} as {
+      type: "request to worker for calculation";
+      command: ChromeEventType;
+      context: IContext;
+    },
+  },
+  context: {
+    data: {},
+    occurTabId: -1,
+    occurWindowId: -1,
+    prevOccurTabId: -1,
+    prevOccurWindowId: -1,
+    // workerRef: spawn(WorkerMachine)
+  },
+  predictableActionArguments: true,
+  initial: "Loading",
+  states: {
+    Loading: {
+      invoke: {
+        src: "Call all chrome windows",
+        onDone: [
+          {
+            target: "Loaded",
+          },
+        ],
+        onError: [
+          {
+            target: "Failed",
+          },
+        ],
       },
-      predictableActionArguments: true,
-      initial: "Loading",
+    },
+    Loaded: {
+      initial: "Idle",
       states: {
-        Loading: {
+        Idle: {
+          on: {
+            "Request calculating": {
+              target: "Worker",
+            },
+          },
+        },
+        Worker: {
+          entry: "request to worker for calculation",
           invoke: {
-            src: "Call all chrome windows",
+            src: WorkerMachine,
+            id: "worker-machine",
             onDone: [
               {
-                target: "Loaded",
+                target: "Success",
               },
             ],
             onError: [
@@ -158,63 +192,42 @@ const CurrentWindowMachine =
               },
             ],
           },
-        },
-        Loaded: {
-          initial: "Idle",
-          states: {
-            Idle: {
-              on: {
-                "Request calculating": {
-                  target: "Worker",
-                },
-              },
-            },
-            Worker: {
-              entry: "request to worker for calculation",
-              invoke: {
-                src: WorkerMachine,
-                id: "worker-machine",
-                onDone: [
-                  {
-                    target: "Success",
-                  },
-                ],
-                onError: [
-                  {
-                    target: "Failed",
-                  },
-                ],
-              },
-              on: {
-                Test: {
-                  // actions: "request to worker for calculation",
-                },
-              },
-            },
-            Success: {
-              entry: () => console.log("success!!!"),
-            },
-            Failed: {},
-          },
           on: {
-            Exit: {
-              target: "Terminate",
-            },
+            Test: {},
           },
         },
-        Terminate: {
-          type: "final",
+        Success: {
+          entry: () => console.log("success!!!"),
+          always: {
+            target: "Idle",
+          },
         },
         Failed: {
-          on: {
-            Retry: {
-              target: "Loading",
-            },
+          entry: () => console.log('failed :('),
+          always: {
+            target: "Idle",
           },
         },
       },
-      id: "Current window machine",
+      on: {
+        Exit: {
+          target: "Terminate",
+        },
+      },
     },
+    Terminate: {
+      type: "final",
+    },
+    Failed: {
+      on: {
+        Retry: {
+          target: "Loading",
+        },
+      },
+    },
+  },
+  id: "Current window machine",
+},
     {
       services: {
         "Call all chrome windows":
@@ -258,15 +271,6 @@ btn.addEventListener("click", () => {
     });
   } else if (state.matches("Loaded.Worker")) {
     a.send(state.event);
-  }
-});
-
-const btn2 = document.createElement("button");
-document.body.appendChild(btn2);
-btn2.textContent = "test";
-btn2.addEventListener("click", () => {
-  if (state.matches("Loaded.Worker")) {
-    a.send({ type: "Test" });
   }
 });
 

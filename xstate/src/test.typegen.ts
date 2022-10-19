@@ -41,6 +41,10 @@ export interface Typegen1 {
       data: unknown;
       __tip: "See the XState TS docs to learn how to strongly type this.";
     };
+    "error.platform.worker-machine": {
+      type: "error.platform.worker-machine";
+      data: unknown;
+    };
     "xstate.init": { type: "xstate.init" };
   };
   invokeSrcNameMap: {
