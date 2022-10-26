@@ -28,7 +28,9 @@ module.exports = {
   //   test: path.resolve(__dirname, "src", "test.ts")
   // },
   entry: { 
-    main: path.resolve(__dirname, "src", "main.ts")
+    main: path.resolve(__dirname, "src", "main.ts"),
+    main2: path.resolve(__dirname, "src", "main2.ts"),
+    jsMain: path.resolve(__dirname, "src", "main.js")
   },
   output: {
     filename: '[name].js',

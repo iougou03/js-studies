@@ -67,7 +67,7 @@ export const redditMachine =
       subreddit: null,
       posts: null
     },
-    tsTypes: {} as import("./reddit.typegen").Typegen0,
+    tsTypes: {} as import("./reddit.typegen").Typegen0 ,
     schema: {
       context: {} as IRedditContext,
       events: {} as RedditEvents

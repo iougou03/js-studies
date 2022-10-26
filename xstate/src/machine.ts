@@ -1,4 +1,4 @@
-import { createMachine } from "xstate"
+import { assign, createMachine } from "xstate"
 export interface IData {
 	data: {
 		title: string
@@ -15,6 +15,7 @@ export interface IRedditData {
 async function invokeFetchSubreddit(context: IRedditContext) {
 	const { subreddit } = context;
 
+	console.log(`https://www.reddit.com/r/${subreddit}.json`);
 	return fetch(`https://www.reddit.com/r/${subreddit}.json`)
 		.then(res => res.json())
 		.then((json: IRedditData) => json.data.children);
@@ -29,7 +30,7 @@ export interface IRedditContext {
 	posts: Array<IData> | null;
 }
 
-const redditMachine =
+export const redditMachine =
 	/** @xstate-layout N4IgpgJg5mDOIC5QCdIQJYBcDEBlAogDL4DCAKgNoAMAuoqAA4D2sW6TAdvSAB6ICMAVgDMAOgAcANkH8A7JP7jZATnH9hggDQgAngIAsYycOFVx+-fwBMyyZOVWAvs+0cmEON1QQMmUeggAGzBuZlZMdi4kXkRJKm09BGVlUWS0-mtBKitxYX0XEG9fUVgwYIBjTEhQljZObj4EOITEK2FJUSourv59SXFBZVkRAqKsGvDIhoErFoRrZ2cgA */
 	createMachine({
 		predictableActionArguments: true,
@@ -52,6 +53,9 @@ const redditMachine =
 			selected: {},
 		},
 		id: "reddit",
+		context: {
+			subreddit: ''
+		}
 	}, {
 		actions: {
 			"change name": (context, event) => {
@@ -60,19 +64,21 @@ const redditMachine =
 		}
 	})
 
-const createSubredditMachine = (subreddit: string) =>
+
+export interface IRedditContext2 {
+	subreddit: string,
+	posts:  Array<IData> | null,
+	lastUpdated: number | null
+}
+export const createSubredditMachine = (subreddit: string) =>
 	/** @xstate-layout N4IgpgJg5mDOIC5SwK4CMBOkIEsAuAdADYD2AhrgHZQDEEJlYBOlAbiQNZMBmYeAxgAsAtKkzZ8AbQAMAXUSgADiVj4cDBSAAeiACy7pBAOwBGABxGArABoQAT0QAmAMxmAvm9tisEXIVIULLRgGBgkGASKRGR43OEAtgS8AiLeEngy8kggyqp46pSaOgj6hqYWNvaIJs66Hl7oPn7E5BCQNABKAKIAYt0AygASmZq5ahrZxZa1BACcZrrOVrYOCOYAbPUgab74SWQ4RChYnV0AKh0AmiPZY-kToFOW6wTSuusVK4hmjh6eIJQSG14Nkds0AlQoKMVONCpNEMJnCYvggjEYCHV-mC9hDINC8gUioh1utLARno5KqsTLNdAQzM5GUzmYyTFtsYRuAcjlh8bCiQgSWSKVTELNDAyWVLnOzGuk+fc4Y8EUZZijhCZDJZZjrdXrdZiPEA */
 	createMachine({
 		schema: {
-			context: {} as {
-				subreddit: string,
-				posts:  Array<IData> | null,
-				lastUpdated: Date | null
-			},
+			context: {} as IRedditContext2,
 			events: {} as
 				| { type: 'done.invoke.fetch-subreddit'; data: Array<IData> }
 				| { type: 'REFRESH' }
-				| { type: 'RETRY' }
+				| { type: 'RETRY' },
 		},
 		context: {
 			subreddit,
@@ -89,6 +95,7 @@ const createSubredditMachine = (subreddit: string) =>
 					onDone: [
 						{
 							target: "loaded",
+							actions: 'update context'
 						},
 					],
 					onError: [
@@ -114,4 +121,11 @@ const createSubredditMachine = (subreddit: string) =>
 			},
 		},
 		id: "subreddit",
+	}, {
+		actions: {
+			'update context': (context, event) => {
+				context.posts = event.data;
+				context.lastUpdated = Date.now();
+			}
+		}
 	});
