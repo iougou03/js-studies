@@ -24,6 +24,11 @@ export interface Typegen0 {
 export interface Typegen1 {
   "@@xstate/typegen": true;
   internalEvents: {
+    "done.invoke.fetch-subreddit": {
+      type: "done.invoke.fetch-subreddit";
+      data: unknown;
+      __tip: "See the XState TS docs to learn how to strongly type this.";
+    };
     "xstate.init": { type: "xstate.init" };
   };
   invokeSrcNameMap: {};
@@ -33,7 +38,9 @@ export interface Typegen1 {
     guards: never;
     delays: never;
   };
-  eventsCausingActions: {};
+  eventsCausingActions: {
+    "update context": "done.invoke.fetch-subreddit";
+  };
   eventsCausingServices: {};
   eventsCausingGuards: {};
   eventsCausingDelays: {};

@@ -4,8 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "build": "webpack",
-    "build-watch": "webpack --watch",
+    "build": "webpack --config webpack.config.js",
+    "build-watch": "webpack --config webpack.config.js --watch",
     "test": "mocha -r ts-node/register -r isomorphic-fetch 'src/**/*.test.ts'"
   },
   "keywords": [],
