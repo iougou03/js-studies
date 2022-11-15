@@ -1,0 +1,103 @@
+:root {
+  --navbar-height: 60px;
+  --nav-index: 50;
+  --white: #fff;
+  --btn-color-base: #4e5968;
+  --btn-color-lang: ##333d4b; }
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: 'Spoqa Han Sans Neo', 'sans-serif'; }
+
+h1, h2, h3, h4, h5, h6, span, p, div {
+  word-break: keep-all;
+  white-space: pre-wrap; }
+
+a {
+  text-decoration: none;
+  color: inherit; }
+
+ul, li {
+  list-style: none; }
+
+.navbar {
+  position: fixed;
+  max-width: 1140px;
+  width: 100%;
+  height: var(--navbar-height);
+  z-index: var(--nav-index);
+  border-bottom: 1px solid transparent;
+  background-color: var(--white);
+  top: 0;
+  left: 0;
+  transition: background-color .2s ease; }
+  .navbar .container {
+    width: 92%;
+    height: 100%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center; }
+
+.navbar__icon {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  margin-right: 24px; }
+  .navbar__icon a {
+    width: 76px;
+    height: 20px; }
+  .navbar__icon span {
+    display: inline-block; }
+  .navbar__icon svg {
+    width: 100%;
+    height: 20px; }
+
+.navbar__content {
+  display: flex;
+  flex: 1;
+  max-height: 100%;
+  justify-content: space-between;
+  transition: .2s ease; }
+  .navbar__content > div {
+    display: flex;
+    color: var(--btn-color-lang);
+    font-size: 15px; }
+    .navbar__content > div li:nth-child(1) {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      padding: 0 8px;
+      padding: 12px 18px; }
+      .navbar__content > div li:nth-child(1) span {
+        padding: 12px 10px; }
+    .navbar__content > div > span:nth-child(2) {
+      color: #d1d6db; }
+    .navbar__content > div li:nth-child(3) {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      padding: 0 8px;
+      padding: 12px 18px; }
+
+.navbar__content__menu-list {
+  display: flex;
+  color: var(--btn-color-base); }
+  .navbar__content__menu-list li {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 8px; }
+    .navbar__content__menu-list li a {
+      padding: 12px 10px;
+      font-size: 15px;
+      line-height: 20px;
+      border-radius: 8px;
+      border: 0;
+      cursor: pointer;
+      background-color: transparent;
+      text-decoration: none;
+      text-align: left; }
+
+/*# sourceMappingURL=styles.css.map */

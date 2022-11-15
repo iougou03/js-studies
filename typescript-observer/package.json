@@ -1,0 +1,24 @@
+{
+  "name": "js-studies",
+  "version": "1.0.0",
+  "description": "As I'm willing to be a full-stack developer, I need to be good at Javascript and things that have a relation to JS(e.g React, Express, web API ...). So this repository has aimed at practicing those skills.",
+  "main": "index.js",
+  "scripts": {
+    "init": "tsc --init",
+    "tsc": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iougou03/js-studies.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/iougou03/js-studies/issues"
+  },
+  "homepage": "https://github.com/iougou03/js-studies#readme",
+  "dependencies": {
+    "typescript": "^4.7.4"
+  }
+}

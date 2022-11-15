@@ -14,6 +14,11 @@ barba.init({
   transitions:[{
     name: 'understanding-trasnition',
 
+    // check namespace
+    // from: {
+    //   namespace: ['page2']
+    // },
+
     async enter(data) {
       data.next.container.style.transform = 'translateY(10px)';
       data.next.container.style.opacity = 0;
