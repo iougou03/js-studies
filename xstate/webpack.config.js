@@ -29,8 +29,8 @@ module.exports = {
   // },
   entry: { 
     main: path.resolve(__dirname, "src", "main.ts"),
-    main2: path.resolve(__dirname, "src", "main2.ts"),
-    jsMain: path.resolve(__dirname, "src", "main.js")
+    prac1: path.resolve(__dirname,"src", "parent-child.ts"),
+    prac2: path.resolve(__dirname, "src", "context-test.ts")
   },
   output: {
     filename: '[name].js',
