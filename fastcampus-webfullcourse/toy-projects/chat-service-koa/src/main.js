@@ -26,13 +26,22 @@ app.ws.use(
       try {
         const parseData = JSON.parse(data.toString());
 
-        const { _message, _nickname } = JSON.parse(parseData);
-        ctx.websocket.send(
-          JSON.stringify({
-            message: _message,
-            nickname: _nickname,
-          })
-        );
+        const { message, nickname } = parseData;
+
+        const { server } = app.ws;
+
+        if (!server) {
+          return;
+        }
+
+        server.clients.forEach((client) => {
+          client.send(
+            JSON.stringify({
+              message,
+              nickname,
+            })
+          );
+        });
       } catch (err) {
         console.log(data.toString());
       }
