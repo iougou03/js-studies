@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        html , body {
+            height: 100%;
+            width: 100%;
+        }
+        body {
+            background-color: rgb(44, 29, 29);
+            overflow: hidden;
+        }
+        div {
+            /* height: 400px; */
+        }
+    </style>
+    <title>Document</title>
+</head>
+<body onmousedown="return false">
+    <h1>IOS Clock!</h1>
+    <!-- disable drag for ios clock -->
+    <!-- https://stackoverflow.com/questions/704564/disable-drag-and-drop-on-html-elements -->
+    <ios-dial cnt="3" max-val-list="24,60,60"></ios-dial>
+    
+    <script src="./main.js"></script>
+</body>
+</html>
+
