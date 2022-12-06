@@ -252,9 +252,9 @@ class IosDial extends HTMLElement {
   keyDownHandler(e) {
     this.isKeydown = true;
     if (e.code === "ArrowUp") {
-      this.positionPerDial.forEach((posi) => (posi.y -= 1));
+      this.positionPerDial.forEach((posi) => (posi.dest -= 100));
     } else if (e.code === "ArrowDown") {
-      this.positionPerDial.forEach((posi) => (posi.y += 1));
+      this.positionPerDial.forEach((posi) => (posi.dest += 100));
     }
 
     this.drawDial();
