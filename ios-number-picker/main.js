@@ -125,11 +125,11 @@ class IosDial extends HTMLElement {
       this.maxValList = userInputMaxValList.split(",").map((v) => parseInt(v));
     }
 
-    window.requestAnimationFrame(this.animate.bind(this));
+    window.requestAnimationFrame(this.animation.bind(this));
   }
 
-  animate() {
-    window.requestAnimationFrame(this.animate.bind(this));
+  animation() {
+    window.requestAnimationFrame(this.animation.bind(this));
 
     if (this.isKeydown || this.isMousedown) return;
 
