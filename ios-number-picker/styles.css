@@ -1,0 +1,38 @@
+#test {
+  width: 100%;
+  height: 300px;
+  perspective: 600px;
+}
+
+#test ul {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  transform-style: preserve-3d;
+  margin: auto;
+}
+
+#test li {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#test li:nth-child(1) {
+  background-color: pink;
+  transform: rotateY(0deg) translateZ(100px);
+}
+#test li:nth-child(2) {
+  background-color: aqua;
+  transform: rotateY(90deg) translateZ(100px);
+}
+#test li:nth-child(3) {
+  background-color: aliceblue;
+  transform: rotateY(180deg) translateZ(100px);
+}
+#test li:nth-child(4) {
+  background-color: cadetblue;
+  transform: rotateY(270deg) translateZ(100px);
+}

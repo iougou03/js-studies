@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+        width: 100%;
+      }
+      body {
+        background-color: rgb(44, 29, 29);
+        /* overflow: hidden; */
+        display: flex;
+        flex-direction: column;
+        padding: 1rem;
+      }
+      .container {
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .sphere {
+        margin: auto;
+
+        /* border-radius: 50%; */
+
+        perspective: 100px;
+      }
+      li {
+        display: block;
+        width: 10px;
+        height: 100px;
+      }
+      .sphere li:nth-child(1) {
+        background-color: black;
+        transform: rotate3d(1, 0, 0, 30deg);
+      }
+      .sphere li:nth-child(2) {
+        background-color: aqua;
+        transform: rotate3d(1, 0, 0, -90deg);
+      }
+    </style>
+    <link rel="stylesheet" href="./styles.css">
+    <title>Document</title>
+  </head>
+  <!-- disable drag for ios clock -->
+  <!-- https://stackoverflow.com/questions/704564/disable-drag-and-drop-on-html-elements -->
+  <body onmousedown="return false">
+    <ul class="sphere">
+      <li></li>
+      <li></li>
+    </ul>
+    <h1>IOS Clock!</h1>
+    <div class="container">
+      <ios-dial
+        cnt="3"
+        max-val-list="24,60,60"
+        title-list="시간,분,초"
+      ></ios-dial>
+    </div>
+
+    <carousel-slider></carousel-slider>
+
+    <div id="test">
+      <ul>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+      </ul>
+    </div>
+
+    <script type="module" src="./main.js"></script>
+    <script type="module" src="./carousel.js"></script>
+  </body>
+</html>
