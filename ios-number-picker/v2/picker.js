@@ -97,7 +97,7 @@ const styles = `
  */
 export class Picker extends HTMLElement {
   /**
-   * @type {{"cnt": number, "num-list": Array<number>, "title-list": Array<string>, "picker-type": "end" | "endless", flexible: boolean, acc:number}}
+   * @type {{"cnt": number, "num-list": Array<number>, "title-list": Array<string>, "picker-type": "end" | "endless", flexible: boolean, acc:number, "allow-key-event": boolean}}
    */
   userSettings = {
     cnt: 1,
@@ -106,6 +106,7 @@ export class Picker extends HTMLElement {
     "picker-type": "end",
     flexible: false,
     acc: 0.18,
+    "allow-key-event": false
   };
 
   /**
@@ -134,6 +135,7 @@ export class Picker extends HTMLElement {
    * @property {number} upperBound
    * @property {number} lowerBound
    * @property {number} idealDest
+   * @property {number} numGap
    */
   /**
    * @type {Array<CoorInfo>}
@@ -160,8 +162,8 @@ export class Picker extends HTMLElement {
   };
 
   keyCoor = {
-    focusedPickerIdx: 0,
-  }
+    focusedPickerIdx: -1,
+  };
 
   /**
    * @type {number}
@@ -176,6 +178,7 @@ export class Picker extends HTMLElement {
     const userTitleList = this.getAttribute("title-list");
     const userFlexible = this.getAttribute("flexible");
     const userPickerType = this.getAttribute("picker-type");
+    const userAllowKeyEvent = this.getAttribute("allow-key-event");
 
     try {
       if (userCnt) {
@@ -196,6 +199,9 @@ export class Picker extends HTMLElement {
         if (userPickerType === "end" || userPickerType === "endless") {
           this.userSettings["picker-type"] = userPickerType;
         } else throw new Error("unvalid picker type");
+      }
+      if (userAllowKeyEvent) {
+        this.userSettings["allow-key-event"] = userAllowKeyEvent === "true";
       }
     } catch (error) {
       console.log(error);
@@ -363,7 +369,7 @@ export class Picker extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <style>${styles}</style>
 
-      <section id="root" onmousedown="return false">
+      <section id="root">
 
         <div class="picker-container">
 
@@ -439,7 +445,9 @@ export class Picker extends HTMLElement {
       const title = this.userSettings["title-list"][pickerIdx];
 
       // @ts-ignore
-      pickerElem.querySelector(".title").style.right=`${-(title.length + 0.2)}em`;
+      pickerElem.querySelector(".title").style.right = `${-(
+        title.length + 0.2
+      )}em`;
     });
   }
 
@@ -459,6 +467,9 @@ export class Picker extends HTMLElement {
         });
       });
 
+      // @ts-ignore
+      const numGap = numsFromPicker[1].offsetTop - numsFromPicker[0].offsetTop;
+
       this.pickerCoor.push({
         y: 0,
         dest: 0,
@@ -466,6 +477,7 @@ export class Picker extends HTMLElement {
         // @ts-ignore
         lowerBound: -numsFromPicker[numsFromPicker.length - 1].offsetTop,
         idealDest: 0,
+        numGap,
       });
     });
 
@@ -524,7 +536,7 @@ export class Picker extends HTMLElement {
                   this.numCoorPerPicker[pickerIdx][numIdx].offsetTop;
 
                 try {
-                  new Audio('./assets/ios-tik.mp3').play();
+                  new Audio("./assets/ios-tik.mp3").play();
                 } catch (err) {
                   console.log(err);
                 }
@@ -549,28 +561,31 @@ export class Picker extends HTMLElement {
    * @param {'add' | 'sub'} method
    */
   addDistanceForDestination(pickerIdx, dis, method) {
-    const maxDis = 50;
+    const maxDis = this.elems["picker-container"].offsetHeight / 6;
 
-    if (method === "add") {
-      if (
-        this.pickerCoor[pickerIdx].dest + dis >
-        this.pickerCoor[pickerIdx].upperBound + maxDis
-      ) {
-        this.pickerCoor[pickerIdx].dest =
-          this.pickerCoor[pickerIdx].upperBound + maxDis;
-      } else {
-        this.pickerCoor[pickerIdx].dest += dis;
-      }
-    } else {
-      if (
-        this.pickerCoor[pickerIdx].dest - dis <
-        this.pickerCoor[pickerIdx].lowerBound - maxDis
-      ) {
-        this.pickerCoor[pickerIdx].dest =
-          this.pickerCoor[pickerIdx].lowerBound - maxDis;
-      } else {
-        this.pickerCoor[pickerIdx].dest -= dis;
-      }
+    switch (method) {
+      case "add":
+        if (
+          this.pickerCoor[pickerIdx].dest + dis >
+          this.pickerCoor[pickerIdx].upperBound + maxDis
+        ) {
+          this.pickerCoor[pickerIdx].dest =
+            this.pickerCoor[pickerIdx].upperBound + maxDis;
+        } else {
+          this.pickerCoor[pickerIdx].dest += dis;
+        }
+        break;
+      case "sub":
+        if (
+          this.pickerCoor[pickerIdx].dest - dis <
+          this.pickerCoor[pickerIdx].lowerBound - maxDis
+        ) {
+          this.pickerCoor[pickerIdx].dest =
+            this.pickerCoor[pickerIdx].lowerBound - maxDis;
+        } else {
+          this.pickerCoor[pickerIdx].dest -= dis;
+        }
+        break;
     }
   }
 
@@ -579,15 +594,59 @@ export class Picker extends HTMLElement {
      * @param {KeyboardEvent} e
      */
     keydown: (e) => {
-      console.log(this.keyCoor)
+      if (this.keyCoor.focusedPickerIdx === -1) {
+        switch (e.code) {
+          case "ArrowUp":
+          case "ArrowDown":
+          case "ArrowLeft":
+          case "ArrowRight":
+            this.elems["all-picker"][0].focus();
+        }
+        return;
+      }
+
+      const gap = this.pickerCoor[this.keyCoor.focusedPickerIdx].numGap;
+
       if (e.code === "ArrowUp") {
-        this.pickerCoor.forEach((coor) => (coor.dest -= 100));
+        this.addDistanceForDestination(
+          this.keyCoor.focusedPickerIdx,
+          gap,
+          "sub"
+        );
       } else if (e.code === "ArrowDown") {
-        this.pickerCoor.forEach((coor) => (coor.dest += 100));
+        this.addDistanceForDestination(
+          this.keyCoor.focusedPickerIdx,
+          gap,
+          "add"
+        );
+      } else if (e.code === "ArrowLeft") {
+        if (this.keyCoor.focusedPickerIdx > 0) {
+          this.elems["all-picker"][this.keyCoor.focusedPickerIdx - 1].focus();
+        } else {
+          this.elems["all-picker"][this.keyCoor.focusedPickerIdx].blur();
+        }
+      } else if (e.code === "ArrowRight") {
+        if (this.keyCoor.focusedPickerIdx < this.userSettings.cnt - 1) {
+          this.elems["all-picker"][this.keyCoor.focusedPickerIdx + 1].focus();
+        } else {
+          this.elems["all-picker"][this.keyCoor.focusedPickerIdx].blur();
+        }
       }
     },
     keyup: () => {},
   };
+
+  attachFocusEventListener() {
+    this.elems["all-picker"].forEach((pickerElem, pickerIdx) => {
+      pickerElem.addEventListener("focusin", () => {
+        this.keyCoor.focusedPickerIdx = pickerIdx;
+      });
+
+      pickerElem.addEventListener("focusout", () => {
+        this.keyCoor.focusedPickerIdx = -1;
+      });
+    });
+  }
 
   mouseListener = {
     /**
@@ -625,10 +684,9 @@ export class Picker extends HTMLElement {
        */
       if (dis > window.innerWidth / 4) {
         dis = -this.pickerCoor[this.mouseCoor.pressedPickerIdx].lowerBound;
-      }
-      else if (dis > window.innerWidth / 6) {
+      } else if (dis > window.innerWidth / 6) {
         dis = -this.pickerCoor[this.mouseCoor.pressedPickerIdx].lowerBound / 2;
-      } 
+      }
 
       if (dir > 0) {
         // down
@@ -664,10 +722,6 @@ export class Picker extends HTMLElement {
     },
   };
 
-  stId = -1;
-  isResizing = false;
-
- 
   syncSettingsDependsOnResize() {
     this.setStyles();
     this.syncCoor();
@@ -675,6 +729,9 @@ export class Picker extends HTMLElement {
 
     this.isResizing = false;
   }
+
+  stId = -1;
+  isResizing = false;
 
   async resizeListener() {
     this.isResizing = true;
@@ -694,13 +751,31 @@ export class Picker extends HTMLElement {
     });
     document.onmouseleave = this.mouseListener.mouseleave;
 
-    Object.keys(this.keyListener).forEach((event) => {
-      window.addEventListener(event, this.keyListener[event].bind(this));
-    });
+
+    if (this.userSettings["allow-key-event"]) {
+      this.attachFocusEventListener();
+  
+      Object.keys(this.keyListener).forEach((event) => {
+        window.addEventListener(event, this.keyListener[event].bind(this));
+      });
+    }
 
     if (this.userSettings.flexible) {
       window.addEventListener("resize", this.resizeListener.bind(this));
     }
+
+    /**
+     * disable darg and if some picker had focused, will be disappear if user click other area
+     */
+    this.elems.root.onmousedown = () => {
+      const idx = this.keyCoor.focusedPickerIdx;
+
+      if (idx !== -1) {
+        this.elems["all-picker"][idx].blur();
+      }
+
+      return false;
+    };
   }
 
   disconnectedCallback() {
@@ -709,9 +784,11 @@ export class Picker extends HTMLElement {
     });
     document.removeEventListener("mouseleave", this.mouseListener.mouseleave);
 
-    Object.keys(this.keyListener).forEach((event) => {
-      window.removeEventListener(event, this.keyListener[event].bind(this));
-    });
+    if (this.userSettings["allow-key-event"]) {
+      Object.keys(this.keyListener).forEach((event) => {
+        window.removeEventListener(event, this.keyListener[event].bind(this));
+      });
+    }
 
     if (this.userSettings.flexible) {
       window.removeEventListener("resize", this.resizeListener.bind(this));
