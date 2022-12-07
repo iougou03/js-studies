@@ -2,6 +2,22 @@
 import { IPHONE_PPI_WIDTH } from "./ios.js";
 import { range } from "./utils.js";
 
+const errorHTML = `
+  <div style="background-color: #000; text-align: center">
+    <h1 style="
+      display:inline-block;
+      color: #fff; 
+      font-weight: 100; 
+      padding: 2rem;
+      line-height: 1.6em;
+      letter-spacing: -0.03em;
+      max-width: 400px;
+      ">
+      <b>Oops!😢</b> you insert some attributes incorrectly
+    </h1>
+  </div>
+`;
+
 const styles = `
   /* reset css */
   * {
@@ -39,9 +55,9 @@ const styles = `
     width: 100%;
     height: fit-content;
     display: flex;
-    padding: 0.35em 1.5em ;
-    justify-content: space-between;
+    padding: 0.35em 1.5em;
     perspective: 1000px;
+    justify-content: space-between;
     background-color: rgba(255, 255, 255, .15);
     border-radius: 10px;
   }
@@ -97,10 +113,9 @@ const styles = `
  */
 export class Picker extends HTMLElement {
   /**
-   * @type {{"cnt": number, "num-list": Array<number>, "title-list": Array<string>, "picker-type": "end" | "endless", flexible: boolean, acc:number, "allow-key-event": boolean, sound: boolean}}
+   * @type {{"num-list": Array<number>, "title-list": Array<string>, "picker-type": "end" | "endless", flexible: boolean, acc:number, "allow-key-event": boolean, sound: boolean}}
    */
   userSettings = {
-    cnt: 1,
     "num-list": [10],
     "title-list": [],
     "picker-type": "end",
@@ -166,17 +181,17 @@ export class Picker extends HTMLElement {
     focusedPickerIdx: -1,
   };
 
-
   /**
-   * @type {{hasFiredResult: boolean, result: Array<number>}}
+   * @type {{cnt:number, hasFiredResult: boolean, result: Array<number>}}
    * @description you can find codes for 'hasFiredResult' only in {@link animation}
-   *  ,and you can find assigning value cods for 'result' at {@link setObservers} and 
+   *  ,and you can find assigning value cods for 'result' at {@link setObservers} and
    *  can find initializing codes at {@link syncAttributes}
    */
   main = {
+    cnt: 0,
     hasFiredResult: false,
-    result: []
-  }
+    result: [],
+  };
 
   /**
    * @type {number}
@@ -186,7 +201,6 @@ export class Picker extends HTMLElement {
   animFloat = 0.1;
 
   syncAttributes() {
-    const userCnt = this.getAttribute("cnt");
     const userNumList = this.getAttribute("num-list");
     const userTitleList = this.getAttribute("title-list");
     const userFlexible = this.getAttribute("flexible");
@@ -195,36 +209,62 @@ export class Picker extends HTMLElement {
     const userSound = this.getAttribute("sound");
 
     try {
-      if (userCnt) {
-        this.userSettings.cnt = parseInt(userCnt);
-
-        this.main.result = range(parseInt(userCnt)).map(() => 0);
-      }
       if (userNumList) {
-        this.userSettings["num-list"] = userNumList
-          .split(",")
-          .map((v) => parseInt(v));
+        this.userSettings["num-list"] = userNumList.split(",").map((v) => {
+          const n = parseInt(v);
+
+          if (Number.isNaN(n) || n === 0)
+            throw new Error("unvalid num list input");
+
+          return n;
+        });
+
+        this.main.cnt = this.userSettings["num-list"].length;
+        this.main.result = range(this.main.cnt).map(() => 0);
       }
+
       if (userTitleList) {
         this.userSettings["title-list"] = userTitleList.split(",");
       }
+
       if (userFlexible) {
         this.userSettings.flexible = userFlexible === "true";
       }
+
       if (userPickerType) {
         if (userPickerType === "end" || userPickerType === "endless") {
           this.userSettings["picker-type"] = userPickerType;
         } else throw new Error("unvalid picker type");
       }
+
       if (userAllowKeyEvent) {
         this.userSettings["allow-key-event"] = userAllowKeyEvent === "true";
       }
+
       if (userSound) {
         this.userSettings.sound = userSound === "true";
       }
+
+      if (
+        this.userSettings["num-list"].length <
+        this.userSettings["title-list"].length
+      ) {
+        throw new Error("titles cannot be exist more than numbers");
+      } else {
+        while (
+          this.userSettings["num-list"].length >
+          this.userSettings["title-list"].length
+        ) {
+          this.userSettings["title-list"].push("");
+        }
+      }
     } catch (error) {
-      console.log(error);
+      console.error(error);
+
+      return false;
     }
+
+    return true;
   }
 
   /**
@@ -250,6 +290,7 @@ export class Picker extends HTMLElement {
    */
   drawPicker(pickerElem, pickerIdx) {
     const coor = this.pickerCoor[pickerIdx];
+
     this.setDestWhenStop(coor, pickerIdx);
 
     const dis = Math.abs(coor.dest - coor.y);
@@ -361,7 +402,7 @@ export class Picker extends HTMLElement {
   }
 
   isDrawingStop() {
-    return this.pickerCoor.every(coor => coor.dest === coor.y);
+    return this.pickerCoor.every((coor) => coor.dest === coor.y);
   }
 
   animation() {
@@ -377,12 +418,14 @@ export class Picker extends HTMLElement {
     });
 
     if (!this.main.hasFiredResult && this.isDrawingStop()) {
-      this.dispatchEvent(new CustomEvent('setnumber', {
-        detail: {
-          data: this.main.result
-        },
-        bubbles: true,
-      }))
+      this.dispatchEvent(
+        new CustomEvent("setnumber", {
+          detail: {
+            data: this.main.result,
+          },
+          bubbles: true,
+        })
+      );
 
       this.main.hasFiredResult = true;
     }
@@ -395,10 +438,12 @@ export class Picker extends HTMLElement {
     this.attachShadow({ mode: "open" });
 
     // 2. sync attributes from user's inputs
-    this.syncAttributes();
+    const shouldStartPicker = this.syncAttributes();
 
     // 3. start animation
-    requestAnimationFrame(this.animation.bind(this));
+    if (shouldStartPicker) requestAnimationFrame(this.animation.bind(this));
+    // @ts-ignore
+    else this.render = () => (this.shadowRoot.innerHTML = errorHTML);
   }
 
   render() {
@@ -411,7 +456,7 @@ export class Picker extends HTMLElement {
         <div class="picker-container">
 
           <div class="center">
-          ${range(this.userSettings.cnt)
+          ${range(this.main.cnt)
             .map(
               (pickerIdx) => `
               <div class="picker" tabIndex=0>
@@ -478,13 +523,11 @@ export class Picker extends HTMLElement {
 
     this.elems["picker-container"].style.fontSize = `${fontSize}px`;
 
-    this.elems["all-picker"].forEach((pickerElem, pickerIdx) => {
-      const title = this.userSettings["title-list"][pickerIdx];
-
+    this.elems["all-picker"].forEach(pickerElem => {
       // @ts-ignore
-      pickerElem.querySelector(".title").style.right = `${-(
-        title.length + 0.2
-      )}em`;
+      const titleElem = pickerElem.querySelector(".title")
+      // @ts-ignore
+      titleElem.style.right = `${-(titleElem.offsetWidth + fontSize / 8)}px`;
     });
   }
 
@@ -504,8 +547,11 @@ export class Picker extends HTMLElement {
         });
       });
 
-      // @ts-ignore
-      const numGap = numsFromPicker[1].offsetTop - numsFromPicker[0].offsetTop;
+      let numGap = 0;
+      if (numsFromPicker.length > 1) {
+        // @ts-ignore
+        numGap = numsFromPicker[1].offsetTop - numsFromPicker[0].offsetTop;
+      }
 
       this.pickerCoor.push({
         y: 0,
@@ -583,7 +629,7 @@ export class Picker extends HTMLElement {
               }
             }),
           {
-            threshold: 0.65,
+            threshold: 0.5,
             root: pickerElem,
           }
         )
@@ -666,7 +712,7 @@ export class Picker extends HTMLElement {
           this.elems["all-picker"][this.keyCoor.focusedPickerIdx].blur();
         }
       } else if (e.code === "ArrowRight") {
-        if (this.keyCoor.focusedPickerIdx < this.userSettings.cnt - 1) {
+        if (this.keyCoor.focusedPickerIdx < this.main.cnt - 1) {
           this.elems["all-picker"][this.keyCoor.focusedPickerIdx + 1].focus();
         } else {
           this.elems["all-picker"][this.keyCoor.focusedPickerIdx].blur();
