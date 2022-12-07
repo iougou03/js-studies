@@ -19,3 +19,8 @@ export function range(num) {
   return [...Array(num).keys()];
 }
 
+
+
+export function degreesToRadians(degrees) {
+  return degrees * (Math.PI / 180);
+}
