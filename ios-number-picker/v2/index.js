@@ -2,4 +2,4 @@
 
 import { Picker } from "./picker.js";
 
-customElements.define("widget-picker", Picker);
+customElements.define("ios-ui-picker", Picker);

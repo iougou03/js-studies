@@ -97,7 +97,7 @@ const styles = `
  */
 export class Picker extends HTMLElement {
   /**
-   * @type {{"cnt": number, "num-list": Array<number>, "title-list": Array<string>, "picker-type": "end" | "endless", flexible: boolean, acc:number, "allow-key-event": boolean}}
+   * @type {{"cnt": number, "num-list": Array<number>, "title-list": Array<string>, "picker-type": "end" | "endless", flexible: boolean, acc:number, "allow-key-event": boolean, sound: boolean}}
    */
   userSettings = {
     cnt: 1,
@@ -106,7 +106,8 @@ export class Picker extends HTMLElement {
     "picker-type": "end",
     flexible: false,
     acc: 0.18,
-    "allow-key-event": false
+    "allow-key-event": false,
+    sound: true,
   };
 
   /**
@@ -165,9 +166,21 @@ export class Picker extends HTMLElement {
     focusedPickerIdx: -1,
   };
 
+
+  /**
+   * @type {{hasFiredResult: boolean, result: Array<number>}}
+   * @description you can find codes for 'hasFiredResult' only in {@link animation}
+   *  ,and you can find assigning value cods for 'result' at {@link setObservers} and 
+   *  can find initializing codes at {@link syncAttributes}
+   */
+  main = {
+    hasFiredResult: false,
+    result: []
+  }
+
   /**
    * @type {number}
-   * @description float number that help js won't calculate too deeply from {@link animation}
+   * @description float number that help js won't calculate too deeply from {@link drawPicker}
    *  which has {@link reqestAnimationFrame}
    */
   animFloat = 0.1;
@@ -179,10 +192,13 @@ export class Picker extends HTMLElement {
     const userFlexible = this.getAttribute("flexible");
     const userPickerType = this.getAttribute("picker-type");
     const userAllowKeyEvent = this.getAttribute("allow-key-event");
+    const userSound = this.getAttribute("sound");
 
     try {
       if (userCnt) {
         this.userSettings.cnt = parseInt(userCnt);
+
+        this.main.result = range(parseInt(userCnt)).map(() => 0);
       }
       if (userNumList) {
         this.userSettings["num-list"] = userNumList
@@ -202,6 +218,9 @@ export class Picker extends HTMLElement {
       }
       if (userAllowKeyEvent) {
         this.userSettings["allow-key-event"] = userAllowKeyEvent === "true";
+      }
+      if (userSound) {
+        this.userSettings.sound = userSound === "true";
       }
     } catch (error) {
       console.log(error);
@@ -341,14 +360,32 @@ export class Picker extends HTMLElement {
     }
   }
 
+  isDrawingStop() {
+    return this.pickerCoor.every(coor => coor.dest === coor.y);
+  }
+
   animation() {
     requestAnimationFrame(this.animation.bind(this));
 
-    if (this.mouseCoor.isPressed || this.isResizing) return;
+    if (this.mouseCoor.isPressed || this.isResizing) {
+      this.main.hasFiredResult = false;
+      return;
+    }
 
     this.elems["all-picker"].forEach((pickerElem, pickerIdx) => {
       this.drawPicker(pickerElem, pickerIdx);
     });
+
+    if (!this.main.hasFiredResult && this.isDrawingStop()) {
+      this.dispatchEvent(new CustomEvent('setnumber', {
+        detail: {
+          data: this.main.result
+        },
+        bubbles: true,
+      }))
+
+      this.main.hasFiredResult = true;
+    }
   }
 
   constructor() {
@@ -535,8 +572,11 @@ export class Picker extends HTMLElement {
                 this.pickerCoor[pickerIdx].idealDest =
                   this.numCoorPerPicker[pickerIdx][numIdx].offsetTop;
 
+                this.main.result[pickerIdx] = numIdx;
                 try {
-                  new Audio("./assets/ios-tik.mp3").play();
+                  if (this.userSettings.sound) {
+                    new Audio("./assets/ios-tik.mp3").play();
+                  }
                 } catch (err) {
                   console.log(err);
                 }
@@ -751,10 +791,9 @@ export class Picker extends HTMLElement {
     });
     document.onmouseleave = this.mouseListener.mouseleave;
 
-
     if (this.userSettings["allow-key-event"]) {
       this.attachFocusEventListener();
-  
+
       Object.keys(this.keyListener).forEach((event) => {
         window.addEventListener(event, this.keyListener[event].bind(this));
       });
